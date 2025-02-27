@@ -1,73 +1,120 @@
 # RPA_CLEAR_PDF
 
-## Descrição
+## ✨ Descrição
+O **RPA_CLEAR_PDF** é um projeto automatizado para processar arquivos PDF. Ele monitora a pasta `input_pdfs`, processa os arquivos e os move para `processed_pdfs`, garantindo que documentos já tratados não sejam reprocessados.
 
-O **RPA_CLEAR_PDF** é um projeto desenvolvido para automatizar o processamento de arquivos PDF. Ele lê documentos na pasta `input_pdfs`, realiza operações específicas (como extração de texto ou dados) e move os arquivos processados para a pasta `processed_pdfs`. Além disso, o sistema evita o reprocessamento de arquivos já tratados, garantindo eficiência e precisão no fluxo de trabalho.
+Com a implementação do `watcher.py`, o sistema monitora continuamente a pasta `input_pdfs` e executa `main.py` automaticamente ao detectar novos PDFs.
 
-## Funcionalidades
+---
 
-- **Processamento Automático de PDFs**: Leitura e manipulação de arquivos PDF de forma automatizada.
-- **Movimentação de Arquivos**: Após o processamento, os PDFs são movidos para a pasta `processed_pdfs`.
-- **Controle de Arquivos Processados**: O sistema mantém um registro dos arquivos já processados para evitar reprocessamentos.
+## 🔧 Funcionalidades
+- ✅ **Processamento automático de PDFs**: Identifica e manipula arquivos PDF.
+- ✅ **Monitoramento em tempo real**: O `watcher.py` observa a pasta `input_pdfs` e inicia o processamento automaticamente.
+- ✅ **Evita reprocessamento**: Mantém um histórico para impedir que arquivos já tratados sejam processados novamente.
+- ✅ **Execução contínua no servidor**: Pode ser configurado como serviço no **Windows** e **Linux**.
 
-## Requisitos
+---
 
-Antes de executar o projeto, certifique-se de que seu ambiente atende aos seguintes requisitos:
+## 📝 Requisitos
+- **Python 3.x**
+- **Bibliotecas Python** (listadas em `requirements.txt`)
 
-- **Python 3.x**: Linguagem de programação utilizada no desenvolvimento do projeto.
-- **Bibliotecas Python**: As dependências necessárias estão listadas no arquivo `requirements.txt`.
+Instale o Python [aqui](https://www.python.org/downloads/) se ainda não tiver.
 
-## Instalação
+---
 
-Siga os passos abaixo para configurar e executar o projeto em seu ambiente local:
+## 🔄 Instalação
 
-1. **Clone o repositório**:
+### 1. **Clone o repositório**
+```bash
+git clone https://github.com/IuryyCosta/RPA_CLEAR_PDF.git
+cd RPA_CLEAR_PDF
+```
 
+### 2. **Crie um ambiente virtual (opcional, mas recomendado)**
+```bash
+python -m venv venv
+```
+Ative o ambiente virtual:
+- **Windows:** `venv\Scripts\activate`
+- **Linux/macOS:** `source venv/bin/activate`
+
+### 3. **Instale as dependências**
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 🚀 Uso Manual (Sem Monitoramento)
+Se quiser rodar manualmente, coloque os PDFs em `input_pdfs` e execute:
+```bash
+python main.py
+```
+Os arquivos processados serão movidos para `processed_pdfs`.
+
+---
+
+## ⌛ Monitoramento Automático com `watcher.py`
+O `watcher.py` verifica a pasta `input_pdfs` e executa `main.py` automaticamente quando novos PDFs são adicionados.
+
+### 🖥️ **Executando no Windows**
+
+1. Inicie o monitoramento:
    ```bash
-   git clone https://github.com/IuryyCosta/RPA_CLEAR_PDF.git
+   python watcher.py
    ```
-
-2. **Navegue até o diretório do projeto**:
-
-   ```bash
-   cd RPA_CLEAR_PDF
-   ```
-
-3. **Crie um ambiente virtual (opcional, mas recomendado)**:
-
-   ```bash
-   python -m venv venv
-   ```
-
-   Ative o ambiente virtual:
-
-   - No Windows:
-
+2. Para rodar automaticamente no Windows, use o **NSSM**:
+   - Baixe o `nssm.exe` [aqui](https://nssm.cc/download).
+   - Instale o serviço:
      ```bash
-     venv\Scripts\activate
+     nssm install RPA_CLEAR_PDF
+     ```
+   - Configure `Path` para `python.exe` e `Arguments` para `watcher.py`.
+   - Clique em **Install service** e inicie com:
+     ```bash
+     nssm start RPA_CLEAR_PDF
      ```
 
-   - No macOS/Linux:
-
-     ```bash
-     source venv/bin/activate
-     ```
-
-4. **Instale as dependências**:
-
+### 🧑‍💻 **Executando no Linux**
+1. Inicie o monitoramento manualmente:
    ```bash
-   pip install -r requirements.txt
+   python watcher.py
+   ```
+2. Para rodar automaticamente, crie um serviço `systemd`:
+   ```bash
+   sudo nano /etc/systemd/system/rpa_clear_pdf.service
+   ```
+   Adicione:
+   ```ini
+   [Unit]
+   Description=Monitoramento de PDFs
+   After=network.target
+
+   [Service]
+   ExecStart=/usr/bin/python3 /caminho/do/projeto/watcher.py
+   WorkingDirectory=/caminho/do/projeto
+   Restart=always
+   User=seu_usuario
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+3. Habilite e inicie:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl start rpa_clear_pdf
+   sudo systemctl enable rpa_clear_pdf
+   ```
+4. Verifique o status:
+   ```bash
+   sudo systemctl status rpa_clear_pdf
    ```
 
-## Uso
+---
 
-Para iniciar o processamento dos arquivos PDF:
 
-1. Coloque os arquivos PDF que deseja processar na pasta `input_pdfs`.
-2. Execute o script principal:
 
-   ```bash
-   python main.py
-   ```
+---
 
-   O script processará os arquivos e moverá aqueles já tratados para a pasta `processed_pdfs`.
+Agora seu repositório está pronto para ser executado manualmente ou automaticamente como um serviço! 🚀
